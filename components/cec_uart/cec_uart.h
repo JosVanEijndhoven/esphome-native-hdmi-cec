@@ -26,6 +26,8 @@ class CecUart : public Component, public uart::UartDevice {
   bool send_message(const Message& msg);
   bool flush();
   bool is_busy();
+  float get_setup_priority() const override { return setup_priority::HARDWARE; }
+  void setup() override;
 
   protected:
   void issue_message_from_queue();
@@ -34,8 +36,7 @@ class CecUart : public Component, public uart::UartDevice {
   bool check_initiator_collision(uint32_t start_time, uint8_t initiator_adress) const;
   void posedge_isr()
   void loop() override;
-  void setup() override;
-  void gpio_posedge(CecUart *self);
+   void gpio_posedge(CecUart *self);
 
   bool collision_{false};
   bool acks_ok_{true};

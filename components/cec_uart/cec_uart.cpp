@@ -114,6 +114,9 @@ void CecUart::issue_message_from_queue() {
 }
 
 void CecUart::loop() override {
+  // Maybe the uart component base-class needs to do 'loop' activity?
+  uart::UartDevice::loop();
+
   {
     LockGuard send_lock(send_mutex_);
     if (message_queue_.empty()) {
@@ -174,7 +177,10 @@ void CecUart::setup() override {
   // set pin_mode( flags)
   // tx_pin_->pin_mode( ..)
   isr_pin_ = tx_pin_->to_isr();
-  tx_pin_->attach_interrupt(isr, this, gpio::INTERRUPT_RISING_EDGE);
+  tx_pin_->attach_interrupt(CecUart::gpio_posedge, this, gpio::INTERRUPT_RISING_EDGE);
+  rx_pin_ = nullptr;
+  this->rx_buffer_size_ = 0;
+  uart::UartDevice::setup();
 }
 
 }  // namespace cec_uart_ns
