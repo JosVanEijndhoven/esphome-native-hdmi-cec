@@ -1,0 +1,21 @@
+esphome:
+  name: "hdmi-cec-test"
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [hdmi_cec]
+
+esp32:
+  board: esp32dev
+
+uart:
+  id: cec_uart
+  tx_pin: GPIO21
+  baud_rate: 1000
+
+hdmi_cec:
+  pin: GPIO12   # HDMI pin 13 (CEC), with HDMI pin 17 (DDC/CEC ground)
+  address: 0x5
+  physical_address: 0x4000
