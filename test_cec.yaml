@@ -1,5 +1,13 @@
 esphome:
   name: "hdmi-cec-test"
+  on_boot:
+    priority: -100
+    then:
+     - delay: 200ms
+     - lambda: !lambda |-
+         id(uartpin).digital_write(true);
+         id(cec).send(id(cec).address(), 0x8, {0x90, 0x01});
+         id(cec).send(id(cec).address(), 0xf, {0x90, 0x00});
 
 external_components:
   - source:
@@ -8,15 +16,37 @@ external_components:
     components: [hdmi_cec]
 
 esp32:
-  board: esp32dev
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  framework:
+    type: arduino
+  flash_size: 16MB
+
+# Enable logging
+logger:
+  level: DEBUG
 
 uart:
   id: cec_uart
-  tx_pin: GPIO03
+  tx_pin:
+    id: uartpin
+    number: GPIO11  # has diode to cec pin, with kathode here on uart
+#    number: GPIO03
+    mode:
+      output: true
+      pullup: true
+      open_drain: true
   baud_rate: 1000
 
 hdmi_cec:
-  pin: GPIO12   # HDMI pin 13 (CEC), with HDMI pin 17 (DDC/CEC ground)
+  id: cec
+  pin:   # to HDMI pin 13 (CEC), with HDMI pin 17 (DDC/CEC ground)
+    number: GPIO12
+    mode:
+      input: true
+      output: true
+      pullup: true
+      open_drain: true
   address: 0x5
   physical_address: 0x4000
   uart_id: cec_uart
