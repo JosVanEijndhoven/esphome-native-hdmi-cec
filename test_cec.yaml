@@ -5,9 +5,10 @@ esphome:
     then:
      - delay: 200ms
      - lambda: !lambda |-
-         id(uartpin).digital_write(true);
+         // id(uartpin).digital_write(true);
          id(cec).send(id(cec).address(), 0x8, {0x90, 0x01});
          id(cec).send(id(cec).address(), 0xf, {0x90, 0x00});
+         id(cec).send(0x1, id(cec).address(), {0x90, 0x00});
 
 external_components:
   - source:
