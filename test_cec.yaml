@@ -51,3 +51,4 @@ hdmi_cec:
   address: 0x5
   physical_address: 0x4000
   uart_id: cec_uart
+  promiscuous_mode: true
