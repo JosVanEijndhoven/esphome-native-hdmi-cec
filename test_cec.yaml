@@ -3,7 +3,8 @@ esphome:
   on_boot:
     priority: -100
     then:
-     - delay: 200ms
+     - output.turn_off: gpio_lcd_pwr
+     - delay: 50ms
      - lambda: !lambda |-
          bool is_hw_uart = id(cec_uart)->get_hw_serial() != nullptr;
          ESP_LOGD("UART", "UART is HW_SERIAL=%d", is_hw_uart);
@@ -29,12 +30,18 @@ esp32:
 logger:
   level: DEBUG
 
+output:
+  - platform: gpio
+    pin: GPIO15
+    # LCD and battery Power Enable
+    id: gpio_lcd_pwr
+
 uart:
   id: cec_uart
   tx_pin:
     number: GPIO11  # has diode to cec pin, with kathode here on uart
 #    number: GPIO03
-  baud_rate: 1000
+  baud_rate: 2
 
 hdmi_cec:
   id: cec
